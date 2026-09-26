@@ -1,0 +1,337 @@
+{
+  "$comment": "AI note: Canonical strict-mode JSON Schema for the campAI campaign plan (output of `generate`, and the `plan` inside `revise`). Owner: Claude Code only; change together with F-ai/types.ts, the SQL, the Edge Function and the frontend in one change set.",
+  "title": "CampaignPlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "executive_summary",
+    "business_objective",
+    "audience",
+    "positioning",
+    "messaging",
+    "offer",
+    "strategic_rationale",
+    "channels",
+    "content_pillars",
+    "copy",
+    "ad_scripts",
+    "creative_briefs",
+    "budget",
+    "timeline",
+    "kpis",
+    "assumptions",
+    "risks",
+    "next_actions",
+    "calendar_items"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short campaign title, at most 80 characters."
+    },
+    "executive_summary": {
+      "type": "string",
+      "description": "One paragraph a business owner can read in 30 seconds: who, what, where, how much, how long, what success looks like."
+    },
+    "business_objective": {
+      "type": "string",
+      "description": "The business goal restated as one measurable sentence."
+    },
+    "audience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary"],
+      "properties": {
+        "primary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "description", "pains", "motivations", "objections"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "pains": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 5 },
+            "motivations": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 5 },
+            "objections": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 5 }
+          }
+        },
+        "secondary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "description", "pains", "motivations", "objections"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "pains": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 5 },
+            "motivations": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 5 },
+            "objections": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 5 }
+          }
+        }
+      }
+    },
+    "positioning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "differentiators"],
+      "properties": {
+        "statement": { "type": "string", "description": "For [audience] who [need], [business] is the [category] that [benefit] because [reason]." },
+        "differentiators": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 4 }
+      }
+    },
+    "messaging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core_message", "supporting_messages"],
+      "properties": {
+        "core_message": { "type": "string" },
+        "supporting_messages": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 4 }
+      }
+    },
+    "offer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "mechanics", "terms"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "mechanics": { "type": "string", "description": "How a customer claims it, in plain steps." },
+        "terms": { "type": ["string", "null"], "description": "Limits or conditions, or null if none." }
+      }
+    },
+    "strategic_rationale": {
+      "type": "string",
+      "description": "Plain-language explanation of why this plan fits the goal. No hidden reasoning, no step-by-step thinking."
+    },
+    "channels": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "role", "priority", "budget_share_percent", "why"],
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": "string", "description": "What this channel does in the campaign, one sentence." },
+          "priority": { "type": "string", "enum": ["primary", "secondary", "support"] },
+          "budget_share_percent": { "type": "number", "description": "Share of total budget, 0-100. Shares across channels should sum to 100." },
+          "why": { "type": "string" }
+        }
+      }
+    },
+    "content_pillars": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "description", "ideas"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "ideas": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 5 }
+        }
+      }
+    },
+    "copy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline_options", "social_captions", "email_or_message_copy"],
+      "properties": {
+        "headline_options": { "type": "array", "items": { "type": "string" }, "minItems": 3, "maxItems": 6 },
+        "social_captions": { "type": "array", "items": { "type": "string" }, "minItems": 3, "maxItems": 6 },
+        "email_or_message_copy": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["purpose", "subject", "body"],
+            "properties": {
+              "purpose": { "type": "string" },
+              "subject": { "type": "string" },
+              "body": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "ad_scripts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "channel", "duration_seconds", "script", "visual_notes"],
+        "properties": {
+          "title": { "type": "string" },
+          "channel": { "type": "string" },
+          "duration_seconds": { "type": "integer" },
+          "script": { "type": "string", "description": "Spoken or on-screen words, in order." },
+          "visual_notes": { "type": "string" }
+        }
+      }
+    },
+    "creative_briefs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "purpose", "format", "key_message", "visual_direction", "deliverables", "due_date"],
+        "properties": {
+          "title": { "type": "string" },
+          "purpose": { "type": "string" },
+          "format": { "type": "string" },
+          "key_message": { "type": "string" },
+          "visual_direction": { "type": "string" },
+          "deliverables": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 6 },
+          "due_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currency", "total", "line_items"],
+      "properties": {
+        "currency": { "type": "string", "description": "ISO 4217 code, for example SGD." },
+        "total": { "type": "number" },
+        "line_items": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "category", "amount", "notes"],
+            "properties": {
+              "name": { "type": "string" },
+              "category": { "type": "string", "enum": ["media", "content", "offer", "tools", "contingency"] },
+              "amount": { "type": "number" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_date", "end_date", "phases"],
+      "properties": {
+        "start_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "end_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "phases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "start_date", "end_date", "focus"],
+            "properties": {
+              "name": { "type": "string" },
+              "start_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+              "end_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+              "focus": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "kpis": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "target", "how_to_measure", "cadence"],
+        "properties": {
+          "name": { "type": "string" },
+          "target": { "type": "string", "description": "A number with a unit, for example '+60 weekday covers per week'." },
+          "how_to_measure": { "type": "string", "description": "Without paid tools: till receipts, a tally sheet, Instagram Insights, a promo code count." },
+          "cadence": { "type": "string", "enum": ["daily", "weekly", "end_of_campaign"] }
+        }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 10 },
+    "risks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["risk", "mitigation"],
+        "properties": {
+          "risk": { "type": "string" },
+          "mitigation": { "type": "string" }
+        }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "when", "effort"],
+        "properties": {
+          "action": { "type": "string" },
+          "when": { "type": "string", "description": "Plain timing such as 'this week' or 'before launch'." },
+          "effort": { "type": "string", "enum": ["small", "medium", "large"] }
+        }
+      }
+    },
+    "calendar_items": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "date",
+          "week_number",
+          "channel",
+          "format",
+          "objective",
+          "content_pillar",
+          "title",
+          "hook",
+          "body",
+          "cta",
+          "creative_direction",
+          "ad_script",
+          "status",
+          "notes"
+        ],
+        "properties": {
+          "id": { "type": "string", "description": "Stable short identifier such as 'ci-01'. Code replaces it with a UUID on save." },
+          "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "week_number": { "type": "integer", "description": "1-based week of the campaign." },
+          "channel": { "type": "string" },
+          "format": { "type": "string", "description": "For example Reel, Story, Carousel, Email, Poster, Post." },
+          "objective": { "type": "string" },
+          "content_pillar": { "type": "string", "description": "Must match a content pillar name." },
+          "title": { "type": "string" },
+          "hook": { "type": "string" },
+          "body": { "type": "string", "description": "Caption or body copy, ready to post." },
+          "cta": { "type": "string" },
+          "creative_direction": { "type": "string" },
+          "ad_script": { "type": ["string", "null"] },
+          "status": { "type": "string", "enum": ["planned", "in_progress", "done", "skipped"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}
