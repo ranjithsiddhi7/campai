@@ -1,15 +1,13 @@
-export {
-  OverviewSection,
-  AudienceSection,
-  StrategySection,
-  MessagingSection,
-  ChannelsSection,
-  ContentSection,
-  CopySection,
-  CreativeBriefsSection,
-  BudgetSection,
-  KpisSection,
-  AssumptionsSection,
-  FlagsNotice,
-} from "./_placeholders";
+export { OverviewSection } from "./OverviewSection";
+export { AudienceSection } from "./AudienceSection";
+export { StrategySection } from "./StrategySection";
+export { MessagingSection } from "./MessagingSection";
+export { ChannelsSection } from "./ChannelsSection";
+export { ContentSection } from "./ContentSection";
+export { CopySection } from "./CopySection";
+export { CreativeBriefsSection } from "./CreativeBriefsSection";
+export { BudgetSection } from "./BudgetSection";
+export { KpisSection } from "./KpisSection";
+export { AssumptionsSection } from "./AssumptionsSection";
+export { FlagsNotice } from "./FlagsNotice";
 export type { SectionProps } from "./types";
