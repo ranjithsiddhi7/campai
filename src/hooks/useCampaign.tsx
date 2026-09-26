@@ -60,6 +60,8 @@ interface CampaignState {
   toggleLock: (key: SectionKey) => void;
   revising: boolean;
   proposal: ReviseResponse | null;
+  /** R1 addition: the last failed requestRevision() call (code + safe message), shown under the ReviseBar. Cleared when a revision starts. */
+  reviseError: { code: string; message: string } | null;
   requestRevision: (instruction: string) => Promise<void>;
   applyProposal: () => Promise<void>;
   discardProposal: () => Promise<void>;
@@ -84,6 +86,7 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
   const [lockedSections, setLocked] = useState<SectionKey[]>([]);
   const [revising, setRevising] = useState(false);
   const [proposal, setProposal] = useState<ReviseResponse | null>(null);
+  const [reviseError, setReviseError] = useState<{ code: string; message: string } | null>(null);
   const reviseRequestId = useRef<string>(newRequestId());
 
   const reload = useCallback(async () => {
@@ -184,12 +187,17 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
     async (instruction: string) => {
       setRevising(true);
       setError(null);
+      setReviseError(null);
       try {
         const res = await reviseCampaign({ campaignId, instruction, lockedSections, requestId: reviseRequestId.current });
         reviseRequestId.current = newRequestId();
         setProposal(res);
       } catch (e) {
-        setError(e instanceof AiClientError ? e.message : "Something went wrong revising your campaign.");
+        // Shown under the ReviseBar only (not in the workspace-level error), so it needs its code.
+        setReviseError({
+          code: e instanceof AiClientError ? e.code : "unknown",
+          message: e instanceof AiClientError ? e.message : "Something went wrong revising your campaign.",
+        });
         // Same rule as generate(): keep the id only after timeout / network, otherwise rotate it.
         if (!(e instanceof AiClientError) || (e.code !== "timeout" && e.code !== "network")) {
           reviseRequestId.current = newRequestId();
@@ -241,11 +249,12 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
       toggleLock,
       revising,
       proposal,
+      reviseError,
       requestRevision,
       applyProposal,
       discardProposal,
     }),
-    [campaign, brief, planRow, calendar, loading, saving, error, notFound, reload, generating, generate, generateError, saveSection, editCalendarItem, createCalendarItem, removeCalendarItem, lockedSections, toggleLock, revising, proposal, requestRevision, applyProposal, discardProposal],
+    [campaign, brief, planRow, calendar, loading, saving, error, notFound, reload, generating, generate, generateError, saveSection, editCalendarItem, createCalendarItem, removeCalendarItem, lockedSections, toggleLock, revising, proposal, reviseError, requestRevision, applyProposal, discardProposal],
   );
 
   return <CampaignContext.Provider value={value}>{children}</CampaignContext.Provider>;

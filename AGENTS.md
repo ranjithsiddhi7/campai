@@ -53,8 +53,8 @@ Switch rule: if `withSupabase` does not work within **45 minutes** of debugging,
 ## 6. Repository layout and file ownership
 
 > **Override (26 September 2026, change set C1, decided by the human):** Bolt is out of tokens, so the **Bolt-owns-`src/` rule is suspended for this project**. Claude Code builds the frontend. Where the table below says "Bolt" for `src/`, read "Claude Code", **except** these paths, which a teammate owns on branch `teammate` after C1a is pushed. Claude Code must never edit them again:
-> `src/components/workspace/*`, `src/components/calendar/*`, `src/components/revision/*`.
-> (`src/pages/Settings.tsx` was on this list until change set C1d, when the human moved it back to Claude Code.)
+> `src/components/workspace/*`, `src/components/calendar/*`.
+> (`src/pages/Settings.tsx` was on this list until change set C1d, and `src/components/revision/*` until change set R1, when the human moved them back to Claude Code.)
 > `src/types/campaign.ts` and `src/lib/validation.ts` are still never edited in frontend change sets. Scope cuts per `docs/campai-package/FAST-TRACK-8h.md`: no smart start (Continue = Skip), no locked sections, no Should-haves.
 
 ```
