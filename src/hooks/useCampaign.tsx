@@ -46,6 +46,8 @@ interface CampaignState {
   // Generation
   generating: boolean;
   generate: () => Promise<void>;
+  /** C1b addition: the last failed generate() call (code + safe message). Survives reload(); cleared when generate() starts or succeeds. */
+  generateError: { code: string; message: string } | null;
 
   // Editing (no AI)
   saveSection: (patch: SectionPatch) => Promise<void>;
@@ -76,6 +78,7 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
   const [notFound, setNotFound] = useState(false);
 
   const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<{ code: string; message: string } | null>(null);
   const generateRequestId = useRef<string>(newRequestId());
 
   const [lockedSections, setLocked] = useState<SectionKey[]>([]);
@@ -130,6 +133,7 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
   const generate = useCallback(async () => {
     setGenerating(true);
     setError(null);
+    setGenerateError(null);
     try {
       await generateCampaign({ campaignId, requestId: generateRequestId.current });
       generateRequestId.current = newRequestId();
@@ -141,6 +145,10 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
         await reload();
       } else {
         setError(e instanceof AiClientError ? e.message : "Something went wrong building your campaign.");
+        setGenerateError({
+          code: e instanceof AiClientError ? e.code : "unknown",
+          message: e instanceof AiClientError ? e.message : "Something went wrong building your campaign.",
+        });
         // Keep the same request_id only when we cannot know whether the server finished (timeout / network):
         // a replay then returns the earlier result. After any server-reported failure the ledger already holds
         // that request_id, so a retry must use a fresh id or it would get 409 duplicate_request.
@@ -224,6 +232,7 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
       reload,
       generating,
       generate,
+      generateError,
       saveSection,
       editCalendarItem,
       createCalendarItem,
@@ -236,7 +245,7 @@ export function CampaignProvider({ campaignId, children }: { campaignId: string;
       applyProposal,
       discardProposal,
     }),
-    [campaign, brief, planRow, calendar, loading, saving, error, notFound, reload, generating, generate, saveSection, editCalendarItem, createCalendarItem, removeCalendarItem, lockedSections, toggleLock, revising, proposal, requestRevision, applyProposal, discardProposal],
+    [campaign, brief, planRow, calendar, loading, saving, error, notFound, reload, generating, generate, generateError, saveSection, editCalendarItem, createCalendarItem, removeCalendarItem, lockedSections, toggleLock, revising, proposal, requestRevision, applyProposal, discardProposal],
   );
 
   return <CampaignContext.Provider value={value}>{children}</CampaignContext.Provider>;
