@@ -1,0 +1,8 @@
+docs/campai-package/*.md
+docs/campai-package/I-code-guide/*.md
+docs/campai-package/E-supabase/
+docs/campai-package/I-code-guide/edge-function-*/
+docs/campai-package/I-code-guide/src-snippets/supabase__*
+supabase/
+CLAUDE.md
+AGENTS.md
