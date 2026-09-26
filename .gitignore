@@ -1,0 +1,27 @@
+# Dependencies and build output
+node_modules/
+dist/
+.vite/
+
+# Environment files — secrets never go to Git
+.env
+.env.local
+.env.*.local
+supabase/.env
+supabase/.env.production
+supabase/functions/.env
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*

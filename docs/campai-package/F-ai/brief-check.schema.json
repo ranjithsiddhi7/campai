@@ -1,0 +1,140 @@
+{
+  "$comment": "AI note: Canonical strict-mode JSON Schema for the `brief_check` operation (smart start field extraction). Owner: Claude Code only; change together with F-ai/types.ts, the Edge Function and the frontend in one change set.",
+  "title": "BriefCheckResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["restatement", "assumptions", "fields"],
+  "properties": {
+    "restatement": {
+      "type": "string",
+      "description": "One paragraph restating the brief in plain language, including the assumed values."
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 0,
+      "maxItems": 8,
+      "description": "Each assumption made where the user did not state a value."
+    },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "goal",
+        "business",
+        "product_or_service",
+        "audience_clues",
+        "budget",
+        "market",
+        "schedule",
+        "existing_assets",
+        "tone_and_constraints"
+      ],
+      "properties": {
+        "goal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"], "description": "What the user actually said or clearly implied, or null." },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string", "description": "The value to prefill if the user is asked." },
+            "question": { "type": "string", "description": "Plain-language question to ask if needed, no marketing jargon." }
+          }
+        },
+        "business": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "product_or_service": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "audience_clues": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["amount", "currency", "status", "suggested_amount", "suggested_currency", "question"],
+          "properties": {
+            "amount": { "type": ["number", "null"], "description": "Budget amount as stated, or null." },
+            "currency": { "type": ["string", "null"], "description": "ISO 4217 code such as SGD, or null." },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_amount": { "type": "number" },
+            "suggested_currency": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "market": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "schedule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start_date", "duration_weeks", "status", "suggested_start_date", "suggested_duration_weeks", "question"],
+          "properties": {
+            "start_date": { "type": ["string", "null"], "description": "ISO date YYYY-MM-DD, or null." },
+            "duration_weeks": { "type": ["integer", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_start_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+            "suggested_duration_weeks": { "type": "integer" },
+            "question": { "type": "string" }
+          }
+        },
+        "existing_assets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        },
+        "tone_and_constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "status", "suggested_default", "question"],
+          "properties": {
+            "value": { "type": ["string", "null"] },
+            "status": { "type": "string", "enum": ["stated", "inferred", "missing"] },
+            "suggested_default": { "type": "string" },
+            "question": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
