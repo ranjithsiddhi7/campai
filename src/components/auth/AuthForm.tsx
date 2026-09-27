@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { INVALID_CREDENTIALS, useAuth } from "../../hooks/useAuth";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { Button, Input, PageSpinner } from "../ui";
 
@@ -36,12 +36,14 @@ export function AuthForm({ mode }: AuthFormProps) {
   const { user, loading, signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from;
+  const navState = location.state as { from?: string; email?: string } | null;
+  const from = navState?.from;
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(navState?.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [needsSignIn, setNeedsSignIn] = useState(false);
 
   if (loading) return <PageSpinner />;
   if (user && !busy) return <Navigate to={from ?? "/app"} replace />;
@@ -52,13 +54,24 @@ export function AuthForm({ mode }: AuthFormProps) {
     if (!email.includes("@")) return setError("Enter a valid email address.");
     if (password.length < 6) return setError("Use a password with at least 6 characters.");
     setBusy(true);
-    const err = mode === "sign-in" ? await signIn(email, password) : await signUp(email, password);
+    if (mode === "sign-up") {
+      const res = await signUp(email, password);
+      if (res.error || !res.signedIn) {
+        setBusy(false);
+        setError(res.error);
+        setNeedsSignIn(!res.error);
+        return;
+      }
+      navigate("/app", { replace: true });
+      return;
+    }
+    const err = await signIn(email, password);
     if (err) {
       setBusy(false);
       setError(err);
       return;
     }
-    navigate(mode === "sign-in" && from ? from : "/app", { replace: true });
+    navigate(from ?? "/app", { replace: true });
   }
 
   return (
@@ -84,7 +97,24 @@ export function AuthForm({ mode }: AuthFormProps) {
             />
             <p aria-live="polite" className="min-h-[1.25rem] text-small text-state-danger">
               {error}
+              {error === INVALID_CREDENTIALS && (
+                <>
+                  {" "}New here?{" "}
+                  <Link to="/sign-up" state={{ ...navState, email }} className="rounded text-accent underline underline-offset-4 focus:outline-none focus-visible:shadow-focus">
+                    Create an account
+                  </Link>
+                </>
+              )}
             </p>
+            {needsSignIn && (
+              <p role="status" className="text-small text-ink">
+                Account created. Please{" "}
+                <Link to="/sign-in" state={{ ...navState, email }} className="rounded text-accent underline underline-offset-4 focus:outline-none focus-visible:shadow-focus">
+                  sign in
+                </Link>
+                .
+              </p>
+            )}
             <Button type="submit" size="lg" busy={busy} busyLabel={copy.busy} className="w-full">
               {copy.button}
             </Button>

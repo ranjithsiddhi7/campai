@@ -10,18 +10,22 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string) => Promise<string | null>;
+  /** signedIn is false when Supabase created the account but returned no session (Confirm email ON). */
+  signUp: (email: string, password: string) => Promise<{ error: string | null; signedIn: boolean }>;
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
 
+/** Shown for wrong email or password. Deliberately does not say whether the email exists. */
+export const INVALID_CREDENTIALS = "That email and password don't match.";
+
 /** Map Supabase auth errors to plain language. Returns null on success. */
 function friendly(message: string | undefined): string | null {
   if (!message) return null;
   const m = message.toLowerCase();
-  if (m.includes("invalid login credentials")) return "That email and password don't match. Try again.";
+  if (m.includes("invalid login credentials")) return INVALID_CREDENTIALS;
   if (m.includes("already registered")) return "There's already an account with this email. Sign in instead.";
   if (m.includes("password") && m.includes("at least")) return "Use a password with at least 6 characters.";
   if (m.includes("rate limit")) return "Too many attempts. Wait a minute and try again.";
@@ -56,8 +60,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       loading,
       async signUp(email, password) {
-        const { error } = await supabase.auth.signUp({ email: email.trim(), password });
-        return friendly(error?.message);
+        const { data, error } = await supabase.auth.signUp({ email: email.trim(), password });
+        if (error) return { error: friendly(error.message), signedIn: false };
+        // Store the session now so RequireAuth sees the user before onAuthStateChange fires.
+        if (data.session) setSession(data.session);
+        return { error: null, signedIn: Boolean(data.session) };
       },
       async signIn(email, password) {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
