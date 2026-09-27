@@ -3,7 +3,7 @@ import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { buttonClasses } from "../components/ui";
 
 export default function NotFound() {
-  useDocumentTitle("Not found");
+  useDocumentTitle("Page not found");
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg px-4 text-ink">
       <div className="max-w-md text-center">

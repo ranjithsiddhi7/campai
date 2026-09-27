@@ -5,8 +5,8 @@ import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { buttonClasses } from "../components/ui";
 
 const COLUMNS = [
-  { title: "Say it in your own words", text: "Tell us what you want the way you'd tell a friend. No marketing terms needed." },
-  { title: "Answer only what we need", text: "Nine short questions about your goal, budget and customers. Most take seconds." },
+  { title: "Answer nine plain questions", text: "Your goal, business, customers, budget, timing and channels, in everyday words. No marketing terms needed." },
+  { title: "Check your brief", text: "Review your answers on one page and change anything before we build." },
   { title: "Get a complete, editable plan", text: "Audience, message, offer, channels, calendar, copy, budget and KPIs (key performance indicators), in about a minute." },
 ];
 
@@ -31,7 +31,7 @@ export default function Landing() {
         <section className="pb-20 pt-16 sm:pb-30 sm:pt-30">
           <h1 className="max-w-4xl text-h1 text-ink sm:text-display">Anyone can run a strategically sound campaign</h1>
           <p className="mt-6 max-w-prose text-body text-ink-secondary sm:text-h3 sm:font-normal">
-            Describe what you want for your business. campAI turns it into one complete, editable marketing campaign you can start using this week.
+            Answer nine plain questions about your business. campAI turns your answers into one complete, editable marketing campaign you can start using this week.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             {user ? (
